@@ -1,18 +1,21 @@
 import { VFC, useReducer } from 'react';
-import { ImageSelector } from './components/ImageSelector/ImageSelector';
+import { ChakraProvider } from '@chakra-ui/react'
+
+import { ImageSelector } from './components/ImageSelector';
 import { ImageViewer } from './components/ImageViewer';
 
 import { parseImage } from './OCR';
-import { AppActionType } from './types';
+import { imageSelectedAction, ocrScannedAction } from './actions';
 
 import type { AppState, AppAction, ImageItem } from './types';
 
 const reducer = (state: AppState | null, action: AppAction) : AppState | null => {
-  const { type, payload } = action;
+  switch (action.type) {
+    case 'IMAGE_SELECTED':
+      return { ...state, selectedImage: action.payload };
 
-  switch (type) {
-    case AppActionType.SELECT_IMAGE:
-      return { ...state, selectedImage: payload };
+    case 'OCR_SCANNED':
+        return { ...state, bboxes: action.payload };
 
     default:
       return state;
@@ -21,30 +24,46 @@ const reducer = (state: AppState | null, action: AppAction) : AppState | null =>
 
 const images: ImageItem[] = [
   {
-    name: 'Receipt 1',
-    url: 'img/receipt.jpg',
-  }
+    name: 'Small receipt',
+    url: 'img/small-receipt.jpg',
+  },
+  {
+    name: 'Large receipt',
+    url: 'img/large-receipt.jpg',
+  },
 ];
 
 export const App: VFC = () => {
-  const [state, dispatch] = useReducer(reducer, null);
+  const [state, dispatch] = useReducer(reducer, {
+    selectedImage: images[0],
+    bboxes: [
+      // {
+      //   x0: 0,
+      //   x1: 807,
+      //   y0: 144,
+      //   y1: 923,
+      // }
+    ],
+  });
 
   const handleClick = (payload: ImageItem) => {
-    dispatch({ type: AppActionType.SELECT_IMAGE, payload });
+    dispatch(imageSelectedAction(payload));
   };
 
   const handleClickOCR = async (imageURL: string) => {
     const result = await parseImage(imageURL);
 
     console.log(result);
+
+    const boxes = result.data.words.map(({ bbox }) => bbox);
+
+    dispatch(ocrScannedAction(boxes));
   };
 
   return (
-    <>
-    <ImageSelector onSelect={handleClick} images={images} />
-    {state?.selectedImage && (
-      <ImageViewer image={state.selectedImage} onClickOCR={handleClickOCR} />
-    )}
-    </>
+    <ChakraProvider>
+      <ImageSelector onSelect={handleClick} images={images} />
+      <ImageViewer image={state?.selectedImage} bboxes={state?.bboxes} onClickOCR={handleClickOCR} />
+    </ChakraProvider>
   );
 }

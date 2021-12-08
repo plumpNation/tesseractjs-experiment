@@ -1,19 +1,24 @@
+import { imageSelectedAction, ocrScannedAction } from './actions';
+
 export interface ImageItem {
   name: string;
   url: string;
 }
 
-export enum AppActionType {
-  SELECT_IMAGE = 'SELECT_IMAGE',
-}
-
 export interface AppState {
   selectedImage?: ImageItem;
+  /** The areas of the view that where text is found */
+  bboxes?: BoundingBox[];
 }
 
-export interface SelectImageAction {
-  type: AppActionType.SELECT_IMAGE,
-  payload: ImageItem;
+// These match tesseracts bounding box
+export interface BoundingBox {
+  x0: number;
+  y0: number;
+  x1: number;
+  y1: number;
 }
 
-export type AppAction = SelectImageAction;
+export type AppAction =
+  | ReturnType<typeof imageSelectedAction>
+  | ReturnType<typeof ocrScannedAction>;
