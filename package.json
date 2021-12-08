@@ -1,22 +1,21 @@
 {
   "name": "tesseract-experiment",
+  "author": "Gavin King <plumpnation@gmail.com>",
+  "license": "MIT",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "description": "Try to make interactive tool to grab text with mouse or gestures",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/plumpNation/tesseractjs-experiment.git"
   },
-  "author": "Gavin King <plumpnation@gmail.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/plumpNation/tesseractjs-experiment/issues"
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "yarn parcel src/index.html"
   },
-  "homepage": "https://github.com/plumpNation/tesseractjs-experiment#readme",
   "dependencies": {
     "tesseract.js": "^2.1.5"
+  },
+  "devDependencies": {
+    "parcel": "^2.0.1"
   }
 }
