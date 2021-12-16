@@ -13,24 +13,21 @@ export interface ImageViewerProps {
   onClickOCR?: (imageURL: string) => void;
 }
 
-const Image = styled('img')({
-  // maxWidth: '500px',
-  // maxHeight: '500px',
-});
-
-const ImageViewerSection = styled('section')({
-  // position: 'relative',
+const ImageContainer = styled('div')({
+  zoom: .5,
+  position: 'relative',
 });
 
 export const ImageViewer: VFC<ImageViewerProps> = ({ imageRef, image, bboxes, onClickOCR }) => (
-  <ImageViewerSection aria-label="image viewer">
+  <section aria-label="image viewer">
     {image?.url && (
       <>
-        <Image src={image.url} ref={imageRef} />
+        <ImageContainer>
+          <img src={image.url} ref={imageRef} alt={image.name} />
+          {bboxes?.map((coords) => <BBox coords={coords} key={coords.toString()} />)}
+        </ImageContainer>
         <Button onClick={() => onClickOCR?.(image.url)}>Run OCR</Button>
       </>
     )}
-
-    {bboxes?.map((coords) => <BBox coords={coords} key={coords.toString()} />)}
-  </ImageViewerSection>
+  </section>
 );
